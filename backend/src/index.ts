@@ -1,17 +1,23 @@
 import express, { Express, Request, Response } from "express";
 import cors, { CorsOptions } from 'cors';
+import bodyParser from "body-parser";
 import dotenv from "dotenv";
+import e from "express";
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT
 
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended:false}))
+
 interface BookData {
     title: string;
     author: string;
     description: string;
     information: string;
+    id: string
   }
 
 const corsOptions: CorsOptions = {
@@ -19,47 +25,80 @@ const corsOptions: CorsOptions = {
 };
 app.use(cors(corsOptions));
 
-let submittedData: BookData[] = [{
+let Books: BookData[] = [{
   title: 'Eragon',
   author: 'Creola Katherine Johnson',
   description: 'mathematician',
-  information: 'funny'
+  information: 'funny',
+  id: "1"
 }, {
   title: 'brisingr',
   author: 'Mario José Molina-Pasquel Henríquez',
   description: 'chemist',
-  information: 'funny'
+  information: 'funny',
+  id: "2"
 }, {
   title: 'Harry potter',
   author: 'Mohammad Abdus Salam',
   description: 'physicist',
-  information: 'funny'
+  information: 'funny',
+  id: "3"
 }, {
   title: 'Minimi',
   author: 'Percy Lavon Julian',
   description: 'chemist',
-  information: 'funny'  
+  information: 'funny',
+  id: "4"
 }, {
   title: 'Aku ankka',
   author: 'Subrahmanyan Chandrasekhar',
   description: 'astrophysicist',
-  information: 'funny'
+  information: 'funny',
+  id: "5"
 }];
 
-app.get("/", (req: Request, res: Response) => {
-    res.send(submittedData);
-});
-
-
-app.post('/save', (req: Request, res: Response) => {
-  const {  title, author, description, information}:BookData = req.body;
-  console.log(title, author, description, information )
-  if (!title) {
-    return res.status(404).send('User Not Found!')
+app.post('/save', async (req: Request, res: Response) => {
+  const book:BookData = req.body;
+  if (!book) {
+    return res.status(404).send('Book Not Found!')
   }
-
-  return res.status(200).json(title)
+  book.id = 'id' + (new Date()).getTime()
+  Books.push(book)
+  return res.sendStatus(200)
 });
+
+app.post('/modify', async (req: Request, res: Response) => {
+  const book:BookData = req.body;
+  if (!book.id) {
+    return res.status(404).send('Book Not Found!')
+  }
+  Books = Books.map(obj =>
+    obj.id === book.id ? { 
+      ...obj, 
+      title: book.title,
+    author: book.author,
+    description: book.description,
+    information: book.information,
+    } : obj
+  );
+  return res.sendStatus(200)
+});
+
+
+app.post('/delete', async (req: Request, res: Response) => {
+  const book:BookData = req.body;
+  if (book.id === undefined){
+    return res.status(404).send('Book Not Found!')
+  }
+  Books  = Books.filter(item => item.id !== book.id);
+  return res.sendStatus(200)
+});
+
+
+app.get("/", (req: Request, res: Response) => {
+    res.send(Books);
+});
+
 
 app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);

@@ -11,7 +11,6 @@ function App() {
       </header>
       <div className='App-body'>
         <BookList/>
-        <BookForm/>
       </div>
     </div>
   );
