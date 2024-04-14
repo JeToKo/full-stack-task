@@ -1,18 +1,24 @@
-import React,  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BookData } from '../utils/interfaces';
 import axios from 'axios';
 import BookForm from './BookForm';
+
 const defaultValues = {
-    title: '',
-    author: '',
-    description: '',
-    information: '',
-    id: ''
+  title: '',
+  author: '',
+  description: '',
+  information: '',
+  id: ''
 }
+
+
 const BookList = () => {
+    // Collection of books
     const [Books, setBooks] = useState<BookData[]>();
+    // Information in form
     const [Params, setParams] = useState<BookData>(defaultValues);
 
+    // Fetch book collection from backend
     const getData = async () => {
       const { data } = await axios.get(`http://localhost:8080/`);
       setBooks(data);
@@ -22,6 +28,7 @@ const BookList = () => {
       getData();
     }, []);
 
+    // Fill form with clicked book's infromation
     const handleClick = (book: BookData) => {
       setParams({
         title: book.title,
@@ -36,7 +43,6 @@ const BookList = () => {
         <div className="App">
             {Books?.map((book) => {
               return (
-                
                 <ul key={book.id}  onClick={() => handleClick(book)}>
                   <b>{book.title}:</b>
                   {' ' + book.author}, 

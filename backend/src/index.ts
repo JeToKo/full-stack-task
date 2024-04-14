@@ -2,7 +2,6 @@ import express, { Express, Request, Response } from "express";
 import cors, { CorsOptions } from 'cors';
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import e from "express";
 
 dotenv.config();
 
@@ -13,92 +12,81 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
 
 interface BookData {
-    title: string;
-    author: string;
-    description: string;
-    information: string;
-    id: string
-  }
+  title: string;
+  author: string;
+  description: string;
+  information: string;
+  id: string
+}
 
 const corsOptions: CorsOptions = {
     origin: process.env.FRONTEND_URL
 };
 app.use(cors(corsOptions));
 
-let Books: BookData[] = [{
-  title: 'Eragon',
-  author: 'Creola Katherine Johnson',
-  description: 'mathematician',
-  information: 'funny',
-  id: "1"
-}, {
-  title: 'brisingr',
-  author: 'Mario José Molina-Pasquel Henríquez',
-  description: 'chemist',
-  information: 'funny',
-  id: "2"
-}, {
-  title: 'Harry potter',
-  author: 'Mohammad Abdus Salam',
-  description: 'physicist',
-  information: 'funny',
-  id: "3"
-}, {
-  title: 'Minimi',
-  author: 'Percy Lavon Julian',
-  description: 'chemist',
-  information: 'funny',
-  id: "4"
-}, {
-  title: 'Aku ankka',
-  author: 'Subrahmanyan Chandrasekhar',
-  description: 'astrophysicist',
-  information: 'funny',
-  id: "5"
-}];
+let Books: BookData[] = [];
 
+// Save new bok into collection
 app.post('/save', async (req: Request, res: Response) => {
-  const book:BookData = req.body;
-  if (!book) {
-    return res.status(404).send('Book Not Found!')
+  try {
+    const book:BookData = req.body;
+    if (!book) {
+      return res.status(404).send('Book Not Found!')
+    }
+    book.id = 'id' + (new Date()).getTime()
+    Books.push(book)
+    return res.sendStatus(200)
+  } catch (error) {
+    // Handle the error
+    res.status(500).send('Internal Server Error');
   }
-  book.id = 'id' + (new Date()).getTime()
-  Books.push(book)
-  return res.sendStatus(200)
 });
 
+// Modify existing book in collection
 app.post('/modify', async (req: Request, res: Response) => {
-  const book:BookData = req.body;
-  if (!book.id) {
-    return res.status(404).send('Book Not Found!')
+  try {
+    const book:BookData = req.body;
+    // Check if book exists
+    if (!book.id) {
+      return res.status(404).send('Book Not Found!')
+    }
+    // Modify book
+    Books = Books.map(obj =>
+      obj.id === book.id ? { 
+        ...obj, 
+        title: book.title,
+        author: book.author,
+        description: book.description,
+        information: book.information,
+      } : obj
+    );
+    return res.sendStatus(200)
+  } catch (error) {
+    // Handle the error
+    res.status(500).send('Internal Server Error');
   }
-  Books = Books.map(obj =>
-    obj.id === book.id ? { 
-      ...obj, 
-      title: book.title,
-    author: book.author,
-    description: book.description,
-    information: book.information,
-    } : obj
-  );
-  return res.sendStatus(200)
 });
 
-
+// Delete existing book in collection
 app.post('/delete', async (req: Request, res: Response) => {
-  const book:BookData = req.body;
-  if (book.id === undefined){
-    return res.status(404).send('Book Not Found!')
-  }
-  Books  = Books.filter(item => item.id !== book.id);
-  return res.sendStatus(200)
+  try {
+    const book:BookData = req.body;
+    // Check if book exists
+    if (book.id === undefined){
+      return res.status(404).send('Book Not Found!')
+    }
+    // Delete book
+    Books  = Books.filter(item => item.id !== book.id);
+    return res.sendStatus(200)
+  } catch (error) {
+    // Handle the error
+    res.status(500).send('Internal Server Error');
+}
 });
-
 
 app.get("/", (req: Request, res: Response) => {
     res.send(Books);
 });
-
 
 app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);

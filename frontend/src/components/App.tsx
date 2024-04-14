@@ -1,5 +1,3 @@
-import React from 'react';
-import BookForm from './BookForm';
 import './App.css';
 import BookList from './BookList';
 
