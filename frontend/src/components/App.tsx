@@ -1,6 +1,7 @@
 import React from 'react';
-import BookForm from './Book-form';
+import BookForm from './BookForm';
 import './App.css';
+import BookList from './BookList';
 
 function App() {
   return (
@@ -8,9 +9,10 @@ function App() {
       <header className="App-header">
         <h1>Full stack task</h1>
       </header>
-      <body className='App-body'>
+      <div className='App-body'>
+        <BookList/>
         <BookForm/>
-      </body>
+      </div>
     </div>
   );
 }
