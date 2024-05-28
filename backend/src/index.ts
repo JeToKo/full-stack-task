@@ -27,7 +27,7 @@ app.use(cors(corsOptions));
 let Books: BookData[] = [];
 
 // Save new bok into collection
-app.post('/save', async (req: Request, res: Response) => {
+app.post('/book/save', async (req: Request, res: Response) => {
   try {
     const book:BookData = req.body;
     if (!book) {
@@ -43,7 +43,7 @@ app.post('/save', async (req: Request, res: Response) => {
 });
 
 // Modify existing book in collection
-app.post('/modify', async (req: Request, res: Response) => {
+app.post('/book/modify', async (req: Request, res: Response) => {
   try {
     const book:BookData = req.body;
     // Check if book exists
@@ -68,7 +68,7 @@ app.post('/modify', async (req: Request, res: Response) => {
 });
 
 // Delete existing book in collection
-app.post('/delete', async (req: Request, res: Response) => {
+app.post('/book/delete', async (req: Request, res: Response) => {
   try {
     const book:BookData = req.body;
     // Check if book exists

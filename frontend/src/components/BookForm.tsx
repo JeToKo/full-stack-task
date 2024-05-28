@@ -61,7 +61,7 @@ const BookForm = (props: BookData) => {
   */
   const handleSubmit = async (e: React.ChangeEvent<any>) => {
     e.preventDefault();
-    await axios.post('http://localhost:8080/save', Book)
+    await axios.post('http://localhost:8080/book/save', Book)
     setBook(defaultValues);
     window.location.reload();
   };
@@ -72,7 +72,7 @@ const BookForm = (props: BookData) => {
   */
   const handleModify = async (e: React.ChangeEvent<any>) => {
     e.preventDefault();
-    await axios.post('http://localhost:8080/modify', Book)
+    await axios.post('http://localhost:8080/book/modify', Book)
     setBook(defaultValues);
     window.location.reload();
   };
@@ -83,7 +83,7 @@ const BookForm = (props: BookData) => {
   */
   const handleDelete = async (e: React.ChangeEvent<any>) => {
     e.preventDefault();
-    await axios.post('http://localhost:8080/delete', Book)
+    await axios.post('http://localhost:8080/book/delete', Book)
     setBook(defaultValues);
     window.location.reload();
   };
